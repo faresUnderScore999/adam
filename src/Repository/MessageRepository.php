@@ -34,6 +34,24 @@ class MessageRepository extends ServiceEntityRepository
             ->getResult();
     }
 
+    /**
+     * Find all messages received by the given user (inbox).
+     *
+     * This method mirrors the typical "inbox" concept: messages where the
+     * user is the receiver, the message has not been soft‑deleted, and the
+     * ordering is most recent first. It returns an array of Message entities.
+     */
+    public function findInbox(User $user): array
+    {
+        return $this->createQueryBuilder('m')
+            ->andWhere('m.receiver = :user')
+            ->andWhere('m.deletedAt IS NULL')
+            ->setParameter('user', $user)
+            ->orderBy('m.createdAt', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
+
     public function findUnreadMessages(User $user): array
     {
         return $this->createQueryBuilder('m')
