@@ -3,34 +3,35 @@
 {% block title %}Conversation with {{ partner.firstName }} - PsyCare{% endblock %}
 
 {% block body %}
-<div class="conversation-container">
-    <div class="conversation-header">
-        Conversation with {{ partner.firstName }} {{ partner.lastName }}
-    </div>
-    <div class="messages-list">
-        {% for message in conversation %}
-            <div class="message-bubble{% if message.sender.id == app.user.id %} sent{% endif %}">
-                <div class="message-content">
-                    {{ message.content }}
+<div class="container">
+    <div class="conversation-container">
+        <div class="conversation-header">
+            💬 {{ partner.firstName }} {{ partner.lastName }}
+            {% if partner.specialty %}
+                <span class="badge bg-primary ms-2">{{ partner.specialty }}</span>
+            {% endif %}
+        </div>
+        <div class="messages-list">
+            {% for message in conversation %}
+                <div class="message-bubble{% if message.sender.id == app.user.id %} sent{% endif %}">
+                    <div class="message-content">{{ message.content|nl2br }}</div>
+                    <div class="message-time">{{ message.createdAt|date('M j, H:i') }}</div>
                 </div>
-                <div class="message-time">
-                    {{ message.createdAt|date('M j, H:i') }}
+            {% else %}
+                <div class="alert alert-info text-center">No messages yet. Start the conversation!</div>
+            {% endfor %}
+        </div>
+        <div class="message-form">
+            {{ form_start(replyForm) }}
+                <div class="mb-3">
+                    {{ form_widget(replyForm.content, {'attr': {'class': 'form-control', 'rows': 3, 'placeholder': 'Type your message...'}}) }}
+                    {{ form_errors(replyForm.content) }}
                 </div>
-            </div>
-        {% else %}
-            <div class="alert alert-info">No messages in this conversation yet. Start the conversation!</div>
-        {% endfor %}
-    </div>
-    <div class="message-form">
-        {{ form_start(replyForm, {'attr': {'class': 'd-flex gap-3'}}) }}
-            <div class="flex-grow-1">
-                {{ form_widget(replyForm.content, {'attr': {'class': 'form-control', 'placeholder': 'Type your message here...', 'rows': 2}}) }}
-                {{ form_errors(replyForm.content) }}
-            </div>
-            <div>
-                {{ form_widget(replyForm.save, {'attr': {'class': 'btn btn-primary'}, 'label': 'Send'}) }}
-            </div>
-        {{ form_end(replyForm) }}
+                <div class="text-end">
+                    {{ form_widget(replyForm.save, {'attr': {'class': 'btn btn-primary px-4'}}) }}
+                </div>
+            {{ form_end(replyForm) }}
+        </div>
     </div>
 </div>
 {% endblock %}

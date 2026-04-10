@@ -3,51 +3,49 @@
 {% block title %}Admin Dashboard - PsyCare{% endblock %}
 
 {% block body %}
-<div class="dashboard-grid">
-    <div class="stat-card">
-        <div class="icon">👥</div>
-        <div class="number">{{ totalUsers }}</div>
-        <div class="label">Total Users</div>
+<div class="container">
+    <div class="dashboard-grid">
+        <div class="stat-card">
+            <div class="icon">👥</div>
+            <div class="number">{{ totalUsers }}</div>
+            <div class="label">Total Users</div>
+        </div>
+        <div class="stat-card">
+            <div class="icon">✅</div>
+            <div class="number">{{ activeUsers }}</div>
+            <div class="label">Active Users</div>
+        </div>
+        <div class="stat-card">
+            <div class="icon">💬</div>
+            <div class="number">{{ recentMessages|length }}</div>
+            <div class="label">Recent Messages</div>
+        </div>
     </div>
-    <div class="stat-card">
-        <div class="icon">✅</div>
-        <div class="number">{{ activeUsers }}</div>
-        <div class="label">Active Users</div>
-    </div>
-    <div class="stat-card">
-        <div class="icon">💬</div>
-        <div class="number">{{ recentMessages|length }}</div>
-        <div class="label">Recent Messages</div>
-    </div>
-</div>
 
-<div class="card">
-    <div class="card-header">
-        <h2 class="h5 mb-0">Recent Messages</h2>
-    </div>
-    <div class="card-body">
-        {% for message in recentMessages %}
-            <div class="message-item">
-                <div class="d-flex justify-content-between align-items-start">
-                    <div>
-                        <div class="message-sender">{{ message.sender.firstName }} {{ message.sender.lastName }} → {{ message.receiver.firstName }} {{ message.receiver.lastName }}</div>
-                        <div class="message-preview">{{ message.content[:120] ~ (message.content|length > 120 ? '...' : '') }}</div>
+    <div class="card">
+        <div class="card-header">
+            <h2 class="h5 mb-0">Recent Messages</h2>
+        </div>
+        <div class="card-body p-0">
+            {% for message in recentMessages %}
+                <div class="message-item">
+                    <div class="d-flex justify-content-between align-items-start">
+                        <div>
+                            <div class="message-sender">{{ message.sender.firstName }} {{ message.sender.lastName }} → {{ message.receiver.firstName }} {{ message.receiver.lastName }}</div>
+                            <div class="message-preview">{{ message.content[:120] ~ (message.content|length > 120 ? '...' : '') }}</div>
+                        </div>
+                        <div class="message-time">{{ message.createdAt|date('M j, H:i') }}</div>
                     </div>
-                    <div class="message-time">{{ message.createdAt|date('M j, H:i') }}</div>
                 </div>
-            </div>
-        {% else %}
-            <div class="alert alert-info">No recent messages.</div>
-        {% endfor %}
+            {% else %}
+                <div class="alert alert-info m-3">No recent messages.</div>
+            {% endfor %}
+        </div>
     </div>
-</div>
 
-<div class="mt-4 d-flex gap-2">
-    <a class="btn btn-primary" href="{{ path('admin_users') }}">
-        <i class="bi bi-people"></i> Manage Users
-    </a>
-    <a class="btn btn-outline-primary" href="{{ path('admin_messages') }}">
-        <i class="bi bi-chat"></i> View All Messages
-    </a>
+    <div class="mt-4 d-flex gap-2">
+        <a class="btn btn-primary" href="{{ path('admin_users') }}">👥 Manage Users</a>
+        <a class="btn btn-outline-primary" href="{{ path('admin_messages') }}">💬 View All Messages</a>
+    </div>
 </div>
 {% endblock %}
