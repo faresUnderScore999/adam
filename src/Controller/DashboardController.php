@@ -36,12 +36,14 @@ class DashboardController extends AbstractController
 
         $stats = [
             'totalMessages' => count($messageRepository->findInbox($user)),
+            'totalUnreadMessages' => count($messageRepository->findUnreadMessages($user)),
         ];
 
         return $this->render('dashboard/index.html.twig', [
             'searchForm' => $searchForm->createView(),
             'psychologists' => $userRepository->findPsychologists($search),
             'stats' => $stats,
+            'isPatient' => $user->isPatient(),
         ]);
     }
 }

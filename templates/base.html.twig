@@ -6,6 +6,7 @@
         <title>{% block title %}PsyCare{% endblock %}</title>
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-2y6F1r+QDR7Bgl8/HC3YB4NL2uFS5f96x8p+j7UDxW7gLx3KCWEYXxF6tWtq6U4F" crossorigin="anonymous">
         <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+        <link rel="stylesheet" href="{{ asset('styles/app.css') }}">
         <style>
             body { padding-top: 70px; }
             .admin-navbar { background: #0d6efd; }
@@ -17,35 +18,106 @@
         {% block stylesheets %}{% endblock %}
     </head>
     <body>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+        <nav class="navbar navbar-expand-lg navbar-dark fixed-top">
             <div class="container-fluid">
-                <a class="navbar-brand" href="{{ path('app_dashboard') }}">PsyCare</a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                <!-- Brand with enhanced styling -->
+                <a class="navbar-brand d-flex align-items-center" href="{{ path('app_dashboard') }}">
+                    <div class="brand-icon me-2">
+                        <i class="bi bi-heart-pulse-fill"></i>
+                    </div>
+                    <span class="brand-text">PsyCare</span>
+                </a>
+
+                <!-- Enhanced mobile toggle -->
+                <button class="navbar-toggler border-0 shadow-none" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
                     <span class="navbar-toggler-icon"></span>
                 </button>
 
                 <div class="collapse navbar-collapse" id="mainNavbar">
+                    <!-- Main navigation -->
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         {% if app.user %}
-                            <li class="nav-item"><a class="nav-link" href="{{ path('app_dashboard') }}">Dashboard</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{{ path('app_messages') }}">Conversations</a></li>
-                            <li class="nav-item"><a class="nav-link" href="{{ path('app_profile') }}">Profile</a></li>
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center" href="{{ path('app_dashboard') }}">
+                                    <i class="bi bi-house-door me-1"></i>
+                                    <span>Dashboard</span>
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center" href="{{ path('app_messages') }}">
+                                    <i class="bi bi-chat-dots me-1"></i>
+                                    <span>Conversations</span>
+                                    {% if app.user and stats.totalUnreadMessages > 0 %}
+                                        <span class="badge bg-danger ms-2">{{ stats.totalUnreadMessages }}</span>
+                                    {% endif %}
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center" href="{{ path('app_profile') }}">
+                                    <i class="bi bi-person me-1"></i>
+                                    <span>Profile</span>
+                                </a>
+                            </li>
                             {% if is_granted('ROLE_ADMIN') %}
-                                <li class="nav-item"><a class="nav-link" href="{{ path('admin_dashboard') }}">Admin</a></li>
+                                <li class="nav-item">
+                                    <a class="nav-link d-flex align-items-center" href="{{ path('admin_dashboard') }}">
+                                        <i class="bi bi-shield-check me-1"></i>
+                                        <span>Admin</span>
+                                    </a>
+                                </li>
                             {% endif %}
                         {% endif %}
                     </ul>
+
+                    <!-- User section -->
                     <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
                         {% if app.user %}
-                            <li class="nav-item d-flex align-items-center me-2 text-white">{{ app.user.firstName }} {{ app.user.lastName }}</li>
-                            <li class="nav-item"><a class="btn btn-outline-light btn-sm" href="{{ path('app_logout') }}">Logout</a></li>
-                        {% else %}
-                            <li class="nav-item"><a class="nav-link" href="{{ path('app_login') }}">Login</a></li>
+                            <!-- User info with avatar -->
                             <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="registerDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Register</a>
-                                <ul class="dropdown-menu" aria-labelledby="registerDropdown">
-                                    <li><a class="dropdown-item" href="{{ path('app_register_patient') }}">Patient</a></li>
-                                    <li><a class="dropdown-item" href="{{ path('app_register_psychologist') }}">Psychologist</a></li>
+                                <a class="nav-link dropdown-toggle d-flex align-items-center user-menu" href="#" id="userDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <div class="user-avatar me-2">
+                                        <i class="bi bi-person-circle"></i>
+                                    </div>
+                                    <div class="user-info d-none d-md-block">
+                                        <div class="user-name">{{ app.user.firstName }} {{ app.user.lastName }}</div>
+                                        <div class="user-role text-muted small">{{ app.user.roles[0] == 'ROLE_PATIENT' ? 'Patient' : 'Psychologist' }}</div>
+                                    </div>
+                                    <i class="bi bi-chevron-down ms-1"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="userDropdown">
+                                    <li><a class="dropdown-item d-flex align-items-center" href="{{ path('app_profile') }}">
+                                        <i class="bi bi-person me-2"></i>View Profile
+                                    </a></li>
+                                    <li><a class="dropdown-item d-flex align-items-center" href="{{ path('app_profile_edit') }}">
+                                        <i class="bi bi-pencil me-2"></i>Edit Profile
+                                    </a></li>
+                                    <li><hr class="dropdown-divider"></li>
+                                    <li><a class="dropdown-item d-flex align-items-center text-danger" href="{{ path('app_logout') }}">
+                                        <i class="bi bi-box-arrow-right me-2"></i>Logout
+                                    </a></li>
+                                </ul>
+                            </li>
+                        {% else %}
+                            <!-- Guest navigation -->
+                            <li class="nav-item">
+                                <a class="nav-link d-flex align-items-center" href="{{ path('app_login') }}">
+                                    <i class="bi bi-box-arrow-in-right me-1"></i>
+                                    <span>Login</span>
+                                </a>
+                            </li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle d-flex align-items-center register-menu" href="#" id="registerDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                                    <i class="bi bi-person-plus me-1"></i>
+                                    <span>Register</span>
+                                    <i class="bi bi-chevron-down ms-1"></i>
+                                </a>
+                                <ul class="dropdown-menu dropdown-menu-end shadow-lg border-0" aria-labelledby="registerDropdown">
+                                    <li><a class="dropdown-item d-flex align-items-center" href="{{ path('app_register_patient') }}">
+                                        <i class="bi bi-person me-2"></i>Register as Patient
+                                    </a></li>
+                                    <li><a class="dropdown-item d-flex align-items-center" href="{{ path('app_register_psychologist') }}">
+                                        <i class="bi bi-person-badge me-2"></i>Register as Psychologist
+                                    </a></li>
                                 </ul>
                             </li>
                         {% endif %}
@@ -53,8 +125,14 @@
                 </div>
             </div>
         </nav>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
 
-        <div class="container page-container my-4">
+        <div class="main-content">
             {% for label, messages in app.flashes %}
                 {% for message in messages %}
                     <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show" role="alert">
@@ -67,13 +145,100 @@
             {% block body %}{% endblock %}
         </div>
 
-        <footer class="bg-light py-4 mt-auto border-top">
+        <footer class="bg-white py-4 mt-auto border-top">
             <div class="container text-center text-muted small">
-                PsyCare &copy; {{ "now"|date('Y') }} — Private messaging for patients and psychologists.
+                <div class="mb-2">
+                    <strong>PsyCare</strong> &copy; {{ "now"|date('Y') }} — Private messaging for patients and psychologists.
+                </div>
+                <div>
+                    <a href="#" class="text-decoration-none me-3">Privacy Policy</a>
+                    <a href="#" class="text-decoration-none me-3">Terms of Service</a>
+                    <a href="#" class="text-decoration-none">Contact Us</a>
+                </div>
             </div>
         </footer>
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-B9jJqHVVwBzk7yd7defFjSjUyie1wIBcEVc9D5E2Yk7bXrYpI60PuK4Zh7+gGd7B" crossorigin="anonymous"></script>
+        <script>
+            // Navbar scroll effect and interactions
+            document.addEventListener('DOMContentLoaded', function() {
+                const navbar = document.querySelector('.navbar');
+
+                // Scroll effect
+                window.addEventListener('scroll', function() {
+                    if (window.scrollY > 50) {
+                        navbar.classList.add('scrolled');
+                    } else {
+                        navbar.classList.remove('scrolled');
+                    }
+                });
+
+                // Smooth dropdown animations
+                const dropdowns = document.querySelectorAll('.dropdown');
+                dropdowns.forEach(dropdown => {
+                    dropdown.addEventListener('show.bs.dropdown', function() {
+                        const menu = this.querySelector('.dropdown-menu');
+                        menu.style.opacity = '0';
+                        menu.style.transform = 'translateY(-10px)';
+                        setTimeout(() => {
+                            menu.style.transition = 'all 0.3s ease-out';
+                            menu.style.opacity = '1';
+                            menu.style.transform = 'translateY(0)';
+                        }, 1);
+                    });
+                });
+
+                // Add click animation to nav links
+                const navLinks = document.querySelectorAll('.navbar-nav .nav-link:not(.dropdown-toggle)');
+                navLinks.forEach(link => {
+                    link.addEventListener('click', function(e) {
+                        if (!this.classList.contains('dropdown-toggle')) {
+                            this.style.transform = 'scale(0.95)';
+                            setTimeout(() => {
+                                this.style.transform = '';
+                            }, 150);
+                        }
+                    });
+                });
+
+                // Add ripple effect to buttons
+                const buttons = document.querySelectorAll('.navbar .btn, .navbar .nav-link');
+                buttons.forEach(button => {
+                    button.addEventListener('click', function(e) {
+                        const ripple = document.createElement('span');
+                        ripple.style.position = 'absolute';
+                        ripple.style.borderRadius = '50%';
+                        ripple.style.background = 'rgba(255, 255, 255, 0.3)';
+                        ripple.style.transform = 'scale(0)';
+                        ripple.style.animation = 'ripple 0.6s linear';
+                        ripple.style.left = (e.offsetX - 10) + 'px';
+                        ripple.style.top = (e.offsetY - 10) + 'px';
+                        ripple.style.width = '20px';
+                        ripple.style.height = '20px';
+
+                        this.style.position = 'relative';
+                        this.style.overflow = 'hidden';
+                        this.appendChild(ripple);
+
+                        setTimeout(() => {
+                            ripple.remove();
+                        }, 600);
+                    });
+                });
+            });
+
+            // Ripple animation
+            const style = document.createElement('style');
+            style.textContent = `
+                @keyframes ripple {
+                    to {
+                        transform: scale(4);
+                        opacity: 0;
+                    }
+                }
+            `;
+            document.head.appendChild(style);
+        </script>
         {% block javascripts %}{% endblock %}
     </body>
 </html>

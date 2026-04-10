@@ -3,43 +3,51 @@
 {% block title %}Admin Dashboard - PsyCare{% endblock %}
 
 {% block body %}
-<div class="row">
-    <div class="col-lg-12">
-        <div class="card shadow-sm mb-4">
-            <div class="card-body">
-                <h1 class="h4">Admin Dashboard</h1>
-                <div class="row mt-4">
-                    <div class="col-md-4 mb-3">
-                        <div class="card p-3">
-                            <h2 class="h5">Total users</h2>
-                            <p class="display-6">{{ totalUsers }}</p>
-                        </div>
-                    </div>
-                    <div class="col-md-4 mb-3">
-                        <div class="card p-3">
-                            <h2 class="h5">Active users</h2>
-                            <p class="display-6">{{ activeUsers }}</p>
-                        </div>
-                    </div>
-                </div>
-                <a class="btn btn-outline-primary" href="{{ path('admin_users') }}">Manage users</a>
-                <a class="btn btn-outline-secondary" href="{{ path('admin_messages') }}">See all messages</a>
-            </div>
-        </div>
-
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h2 class="h5">Recent messages</h2>
-                {% for message in recentMessages %}
-                    <div class="border-bottom py-2">
-                        <div class="small text-muted">{{ message.createdAt|date('Y-m-d H:i') }} from {{ message.sender.firstName }} {{ message.sender.lastName }} to {{ message.receiver.firstName }} {{ message.receiver.lastName }}</div>
-                        <p class="mb-0">{{ message.content[:120] ~ (message.content|length > 120 ? '...' : '') }}</p>
-                    </div>
-                {% else %}
-                    <div class="alert alert-info">No messages available.</div>
-                {% endfor %}
-            </div>
-        </div>
+<div class="dashboard-grid">
+    <div class="stat-card">
+        <div class="icon">👥</div>
+        <div class="number">{{ totalUsers }}</div>
+        <div class="label">Total Users</div>
     </div>
+    <div class="stat-card">
+        <div class="icon">✅</div>
+        <div class="number">{{ activeUsers }}</div>
+        <div class="label">Active Users</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon">💬</div>
+        <div class="number">{{ recentMessages|length }}</div>
+        <div class="label">Recent Messages</div>
+    </div>
+</div>
+
+<div class="card">
+    <div class="card-header">
+        <h2 class="h5 mb-0">Recent Messages</h2>
+    </div>
+    <div class="card-body">
+        {% for message in recentMessages %}
+            <div class="message-item">
+                <div class="d-flex justify-content-between align-items-start">
+                    <div>
+                        <div class="message-sender">{{ message.sender.firstName }} {{ message.sender.lastName }} → {{ message.receiver.firstName }} {{ message.receiver.lastName }}</div>
+                        <div class="message-preview">{{ message.content[:120] ~ (message.content|length > 120 ? '...' : '') }}</div>
+                    </div>
+                    <div class="message-time">{{ message.createdAt|date('M j, H:i') }}</div>
+                </div>
+            </div>
+        {% else %}
+            <div class="alert alert-info">No recent messages.</div>
+        {% endfor %}
+    </div>
+</div>
+
+<div class="mt-4 d-flex gap-2">
+    <a class="btn btn-primary" href="{{ path('admin_users') }}">
+        <i class="bi bi-people"></i> Manage Users
+    </a>
+    <a class="btn btn-outline-primary" href="{{ path('admin_messages') }}">
+        <i class="bi bi-chat"></i> View All Messages
+    </a>
 </div>
 {% endblock %}

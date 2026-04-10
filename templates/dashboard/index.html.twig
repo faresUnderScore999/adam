@@ -3,52 +3,73 @@
 {% block title %}Dashboard - PsyCare{% endblock %}
 
 {% block body %}
-<div class="row mb-4">
-    <div class="col-lg-8">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h1 class="h4 mb-3">Welcome back, {{ app.user.firstName }}</h1>
-                <p class="text-muted">Use your dashboard to review conversations and find the right psychologist.</p>
+<div class="dashboard-grid">
+    <div class="stat-card">
+        <div class="icon">💬</div>
+        <div class="number">{{ stats.totalMessages }}</div>
+        <div class="label">Total Messages</div>
+    </div>
+    <div class="stat-card">
+        <div class="icon">👥</div>
+        <div class="number">{{ psychologists|length }}</div>
+        <div class="label">Available Psychologists</div>
+    </div>
+</div>
+
+<div class="card mb-4">
+    <div class="card-header">
+        <h1 class="h4 mb-0">Welcome back, {{ app.user.firstName }}</h1>
+    </div>
+    <div class="card-body">
+        <p class="text-muted mb-4">Use your dashboard to review conversations and find the right psychologist.</p>
+
+        <div class="row">
+            <div class="col-lg-8">
+                <h2 class="h5 mb-3">Find Your Psychologist</h2>
                 <div class="row">
-                    <div class="col-md-6 mb-3">
-                        <div class="card card-soft p-3">
-                            <h2 class="h5">Messages</h2>
-                            <p class="mb-0">{{ stats.totalMessages }} total messages in your inbox.</p>
+                    {% for psychologist in psychologists %}
+                        <div class="col-lg-6 mb-3">
+                            <div class="psychologist-card">
+                                <div class="psychologist-header">
+                                    <div class="psychologist-name">{{ psychologist.firstName }} {{ psychologist.lastName }}</div>
+                                    <div class="psychologist-specialty">{{ psychologist.specialty }}</div>
+                                </div>
+                                <div class="psychologist-body">
+                                    <div class="psychologist-bio">{{ psychologist.bio|default('Professional psychologist ready to help you.') }}</div>
+                                    <div class="psychologist-actions">
+                                        {% if isPatient %}
+                                            <a class="btn btn-primary btn-sm" href="{{ path('app_messages_new', {psychologistId: psychologist.id}) }}">Send Message</a>
+                                        {% else %}
+                                            <span class="text-muted small">Contact via patient account</span>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                            </div>
                         </div>
+                    {% else %}
+                        <div class="col-12">
+                            <div class="alert alert-info">No psychologists match your search criteria.</div>
+                        </div>
+                    {% endfor %}
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <div class="card">
+                    <div class="card-header">
+                        <h2 class="h5 mb-0">Search Psychologists</h2>
+                    </div>
+                    <div class="card-body">
+                        {{ form_start(searchForm) }}
+                            <div class="mb-3">
+                                {{ form_label(searchForm.search) }}
+                                {{ form_widget(searchForm.search, {'attr': {'class': 'form-control', 'placeholder': 'Search by name or specialty'}}) }}
+                            </div>
+                            <button class="btn btn-primary w-100">Search</button>
+                        {{ form_end(searchForm) }}
                     </div>
                 </div>
             </div>
         </div>
     </div>
-    <div class="col-lg-4">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h2 class="h5">Search Psychologists</h2>
-                {{ form_start(searchForm) }}
-                    {{ form_row(searchForm.search) }}
-                    <button class="btn btn-primary">Search</button>
-                {{ form_end(searchForm) }}
-            </div>
-        </div>
-    </div>
-</div>
-
-<div class="row">
-    {% for psychologist in psychologists %}
-        <div class="col-lg-6 mb-4">
-            <div class="card shadow-sm h-100">
-                <div class="card-body">
-                    <h3 class="h5">{{ psychologist.firstName }} {{ psychologist.lastName }}</h3>
-                    <p class="mb-1"><strong>Specialty:</strong> {{ psychologist.specialty }}</p>
-                    <p class="text-muted">{{ psychologist.bio|default('No bio provided.') }}</p>
-                    <a class="btn btn-outline-primary btn-sm" href="{{ path('app_messages_new', {psychologistId: psychologist.id}) }}">Send message</a>
-                </div>
-            </div>
-        </div>
-    {% else %}
-        <div class="col-12">
-            <div class="alert alert-info">No psychologists match your search yet.</div>
-        </div>
-    {% endfor %}
 </div>
 {% endblock %}

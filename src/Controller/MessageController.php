@@ -32,8 +32,13 @@ class MessageController extends AbstractController
     public function new(UserRepository $userRepository, Request $request, EntityManagerInterface $em, int $psychologistId): Response
     {
         $sender = $this->getUser();
-        if (!$sender instanceof User || !$sender->isPatient()) {
-            throw $this->createAccessDeniedException('Only patients can start new conversations.');
+        if (!$sender instanceof User) {
+            return $this->redirectToRoute('app_login');
+        }
+
+        if (!$sender->isPatient()) {
+            $this->addFlash('error', 'Only patients can start new conversations. Please use a patient account to contact psychologists.');
+            return $this->redirectToRoute('app_dashboard');
         }
 
         $receiver = $userRepository->find($psychologistId);

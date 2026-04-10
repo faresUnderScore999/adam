@@ -4,6 +4,7 @@ namespace App\Repository;
 
 use App\Entity\User;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\ORM\Query\ResultSetMapping;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
@@ -21,34 +22,65 @@ class UserRepository extends ServiceEntityRepository
         parent::__construct($registry, User::class);
     }
 
-    public function findPsychologists(string $search = null): array
+    public function findPsychologists(?string $search = null): array
     {
-        $qb = $this->createQueryBuilder('u')
-            ->andWhere('u.roles LIKE :role')
-            ->setParameter('role', '%ROLE_PSYCHOLOGIST%')
-            ->andWhere('u.isActive = true')
-            ->andWhere('u.deletedAt IS NULL');
+        $rsm = new ResultSetMapping();
+        $rsm->addEntityResult(User::class, 'u');
+        $rsm->addFieldResult('u', 'id', 'id');
+        $rsm->addFieldResult('u', 'email', 'email');
+        $rsm->addFieldResult('u', 'roles', 'roles');
+        $rsm->addFieldResult('u', 'password', 'password');
+        $rsm->addFieldResult('u', 'first_name', 'firstName');
+        $rsm->addFieldResult('u', 'last_name', 'lastName');
+        $rsm->addFieldResult('u', 'phone', 'phone');
+        $rsm->addFieldResult('u', 'birth_date', 'birthDate');
+        $rsm->addFieldResult('u', 'diploma', 'diploma');
+        $rsm->addFieldResult('u', 'specialty', 'specialty');
+        $rsm->addFieldResult('u', 'bio', 'bio');
+        $rsm->addFieldResult('u', 'is_active', 'isActive');
+        $rsm->addFieldResult('u', 'deleted_at', 'deletedAt');
+
+        $sql = "SELECT id, email, roles, password, first_name, last_name, phone, birth_date, diploma, specialty, bio, is_active, deleted_at FROM users WHERE roles::jsonb @> :role AND is_active = true AND deleted_at IS NULL";
 
         if ($search) {
-            $qb->andWhere('LOWER(u.firstName) LIKE :search OR LOWER(u.lastName) LIKE :search OR LOWER(u.specialty) LIKE :search')
-                ->setParameter('search', '%'.mb_strtolower($search).'%');
+            $sql .= " AND (LOWER(first_name) LIKE :search OR LOWER(last_name) LIKE :search OR LOWER(specialty) LIKE :search)";
         }
 
-        return $qb->orderBy('u.specialty', 'ASC')
-            ->addOrderBy('u.lastName', 'ASC')
-            ->getQuery()
-            ->getResult();
+        $sql .= " ORDER BY specialty ASC, last_name ASC";
+
+        $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
+        $query->setParameter('role', json_encode(['ROLE_PSYCHOLOGIST']));
+
+        if ($search) {
+            $query->setParameter('search', '%'.mb_strtolower($search).'%');
+        }
+
+        return $query->getResult();
     }
 
     public function findActiveUsersByRole(string $role): array
     {
-        return $this->createQueryBuilder('u')
-            ->andWhere('u.roles LIKE :role')
-            ->andWhere('u.isActive = true')
-            ->andWhere('u.deletedAt IS NULL')
-            ->setParameter('role', '%'.$role.'%')
-            ->orderBy('u.lastName', 'ASC')
-            ->getQuery()
-            ->getResult();
+        $rsm = new ResultSetMapping();
+        $rsm->addEntityResult(User::class, 'u');
+        $rsm->addFieldResult('u', 'id', 'id');
+        $rsm->addFieldResult('u', 'email', 'email');
+        $rsm->addFieldResult('u', 'roles', 'roles');
+        $rsm->addFieldResult('u', 'password', 'password');
+        $rsm->addFieldResult('u', 'first_name', 'firstName');
+        $rsm->addFieldResult('u', 'last_name', 'lastName');
+        $rsm->addFieldResult('u', 'phone', 'phone');
+        $rsm->addFieldResult('u', 'birth_date', 'birthDate');
+        $rsm->addFieldResult('u', 'diploma', 'diploma');
+        $rsm->addFieldResult('u', 'specialty', 'specialty');
+        $rsm->addFieldResult('u', 'bio', 'bio');
+        $rsm->addFieldResult('u', 'is_active', 'isActive');
+        $rsm->addFieldResult('u', 'deleted_at', 'deletedAt');
+
+        $sql = "SELECT id, email, roles, password, first_name, last_name, phone, birth_date, diploma, specialty, bio, is_active, deleted_at FROM users WHERE roles::jsonb @> :role AND is_active = true AND deleted_at IS NULL ORDER BY last_name ASC";
+
+        $query = $this->getEntityManager()->createNativeQuery($sql, $rsm);
+        $query->setParameter('role', json_encode([$role]));
+
+        return $query->getResult();
     }
 }
