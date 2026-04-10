@@ -1,0 +1,30 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Register a Psychologist - PsyCare{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-xl-7 col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h4 mb-4">Psychologist Registration</h1>
+                {{ form_start(registrationForm) }}
+                    <div class="row g-3">
+                        <div class="col-md-6">{{ form_row(registrationForm.firstName) }}</div>
+                        <div class="col-md-6">{{ form_row(registrationForm.lastName) }}</div>
+                        <div class="col-md-6">{{ form_row(registrationForm.email) }}</div>
+                        <div class="col-md-6">{{ form_row(registrationForm.phone) }}</div>
+                        <div class="col-md-6">{{ form_row(registrationForm.birthDate) }}</div>
+                        <div class="col-md-12">{{ form_row(registrationForm.diploma) }}</div>
+                        <div class="col-md-12">{{ form_row(registrationForm.specialty) }}</div>
+                        <div class="col-md-12">{{ form_row(registrationForm.bio) }}</div>
+                        <div class="col-md-6">{{ form_row(registrationForm.plainPassword.first) }}</div>
+                        <div class="col-md-6">{{ form_row(registrationForm.plainPassword.second) }}</div>
+                    </div>
+                    <div class="mt-4">{{ form_row(registrationForm.save, {attr: {class: 'btn btn-primary'}}) }}</div>
+                {{ form_end(registrationForm) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+        <title>{% block title %}PsyCare{% endblock %}</title>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" integrity="sha384-2y6F1r+QDR7Bgl8/HC3YB4NL2uFS5f96x8p+j7UDxW7gLx3KCWEYXxF6tWtq6U4F" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css">
+        <style>
+            body { padding-top: 70px; }
+            .admin-navbar { background: #0d6efd; }
+            .admin-navbar .nav-link, .admin-navbar .navbar-brand { color: #fff; }
+            .page-container { min-height: calc(100vh - 140px); }
+            .conversation-preview { border-bottom: 1px solid rgba(0,0,0,.08); padding: 1rem 0; }
+            .card-soft { background: #f8f9fa; }
+        </style>
+        {% block stylesheets %}{% endblock %}
+    </head>
+    <body>
+        <nav class="navbar navbar-expand-lg navbar-dark bg-primary fixed-top">
+            <div class="container-fluid">
+                <a class="navbar-brand" href="{{ path('app_dashboard') }}">PsyCare</a>
+                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNavbar" aria-controls="mainNavbar" aria-expanded="false" aria-label="Toggle navigation">
+                    <span class="navbar-toggler-icon"></span>
+                </button>
+
+                <div class="collapse navbar-collapse" id="mainNavbar">
+                    <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                        {% if app.user %}
+                            <li class="nav-item"><a class="nav-link" href="{{ path('app_dashboard') }}">Dashboard</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ path('app_messages') }}">Conversations</a></li>
+                            <li class="nav-item"><a class="nav-link" href="{{ path('app_profile') }}">Profile</a></li>
+                            {% if is_granted('ROLE_ADMIN') %}
+                                <li class="nav-item"><a class="nav-link" href="{{ path('admin_dashboard') }}">Admin</a></li>
+                            {% endif %}
+                        {% endif %}
+                    </ul>
+                    <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+                        {% if app.user %}
+                            <li class="nav-item d-flex align-items-center me-2 text-white">{{ app.user.firstName }} {{ app.user.lastName }}</li>
+                            <li class="nav-item"><a class="btn btn-outline-light btn-sm" href="{{ path('app_logout') }}">Logout</a></li>
+                        {% else %}
+                            <li class="nav-item"><a class="nav-link" href="{{ path('app_login') }}">Login</a></li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="registerDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">Register</a>
+                                <ul class="dropdown-menu" aria-labelledby="registerDropdown">
+                                    <li><a class="dropdown-item" href="{{ path('app_register_patient') }}">Patient</a></li>
+                                    <li><a class="dropdown-item" href="{{ path('app_register_psychologist') }}">Psychologist</a></li>
+                                </ul>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </div>
+            </div>
+        </nav>
+
+        <div class="container page-container my-4">
+            {% for label, messages in app.flashes %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ label == 'error' ? 'danger' : label }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                    </div>
+                {% endfor %}
+            {% endfor %}
+
+            {% block body %}{% endblock %}
+        </div>
+
+        <footer class="bg-light py-4 mt-auto border-top">
+            <div class="container text-center text-muted small">
+                PsyCare &copy; {{ "now"|date('Y') }} — Private messaging for patients and psychologists.
+            </div>
+        </footer>
+
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-B9jJqHVVwBzk7yd7defFjSjUyie1wIBcEVc9D5E2Yk7bXrYpI60PuK4Zh7+gGd7B" crossorigin="anonymous"></script>
+        {% block javascripts %}{% endblock %}
+    </body>
+</html>

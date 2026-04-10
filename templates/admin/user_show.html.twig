@@ -1,0 +1,42 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}User Details - PsyCare{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h4 mb-4">User details</h1>
+                <dl class="row">
+                    <dt class="col-sm-4">Name</dt>
+                    <dd class="col-sm-8">{{ user.firstName }} {{ user.lastName }}</dd>
+                    <dt class="col-sm-4">Email</dt>
+                    <dd class="col-sm-8">{{ user.email }}</dd>
+                    <dt class="col-sm-4">Role</dt>
+                    <dd class="col-sm-8">{{ user.isPsychologist() ? 'Psychologist' : user.isPatient() ? 'Patient' : 'Admin' }}</dd>
+                    <dt class="col-sm-4">Phone</dt>
+                    <dd class="col-sm-8">{{ user.phone }}</dd>
+                    <dt class="col-sm-4">Status</dt>
+                    <dd class="col-sm-8">{{ user.isActive() ? 'Active' : 'Inactive' }}</dd>
+                    {% if user.isPsychologist() %}
+                        <dt class="col-sm-4">Specialty</dt>
+                        <dd class="col-sm-8">{{ user.specialty }}</dd>
+                        <dt class="col-sm-4">Diploma</dt>
+                        <dd class="col-sm-8">{{ user.diploma }}</dd>
+                        <dt class="col-sm-4">Bio</dt>
+                        <dd class="col-sm-8">{{ user.bio }}</dd>
+                    {% endif %}
+                </dl>
+                <form action="{{ path('admin_user_toggle_active', {id: user.id}) }}" method="post" class="d-inline">
+                    <button class="btn btn-{{ user.isActive() ? 'warning' : 'success' }} btn-sm">{{ user.isActive() ? 'Deactivate' : 'Activate' }}</button>
+                </form>
+                <form action="{{ path('admin_user_delete', {id: user.id}) }}" method="post" class="d-inline ms-2">
+                    <button class="btn btn-danger btn-sm">Delete</button>
+                </form>
+                <a class="btn btn-outline-secondary btn-sm ms-2" href="{{ path('admin_users') }}">Back to users</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

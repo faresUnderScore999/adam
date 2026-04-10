@@ -1,0 +1,50 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Manage Users - PsyCare{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="d-flex justify-content-between align-items-center mb-3">
+            <h1 class="h4">Manage Users</h1>
+            <div>
+                <a class="btn btn-outline-secondary btn-sm" href="{{ path('admin_users', {'role': 'ROLE_PATIENT'}) }}">Patients</a>
+                <a class="btn btn-outline-secondary btn-sm" href="{{ path('admin_users', {'role': 'ROLE_PSYCHOLOGIST'}) }}">Psychologists</a>
+                <a class="btn btn-outline-secondary btn-sm" href="{{ path('admin_users') }}">All</a>
+            </div>
+        </div>
+        <div class="table-responsive">
+            <table class="table table-hover align-middle">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Email</th>
+                        <th>Name</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                        <tr>
+                            <td>{{ user.id }}</td>
+                            <td>{{ user.email }}</td>
+                            <td>{{ user.firstName }} {{ user.lastName }}</td>
+                            <td>{{ user.isPsychologist() ? 'Psychologist' : user.isPatient() ? 'Patient' : 'Admin' }}</td>
+                            <td>{{ user.isActive() ? 'Active' : 'Inactive' }}</td>
+                            <td>
+                                <a class="btn btn-sm btn-primary" href="{{ path('admin_user_show', {id: user.id}) }}">View</a>
+                            </td>
+                        </tr>
+                    {% else %}
+                        <tr>
+                            <td colspan="6" class="text-center">No users found.</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+{% endblock %}

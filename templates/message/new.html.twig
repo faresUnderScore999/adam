@@ -1,0 +1,19 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}New message to {{ receiver.firstName }} - PsyCare{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h4 mb-4">Send a message to {{ receiver.firstName }} {{ receiver.lastName }}</h1>
+                {{ form_start(messageForm) }}
+                    {{ form_row(messageForm.content) }}
+                    <button class="btn btn-primary">Send message</button>
+                {{ form_end(messageForm) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

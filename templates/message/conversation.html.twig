@@ -1,0 +1,31 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conversation with {{ partner.firstName }} - PsyCare{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-lg-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h4 mb-3">Conversation with {{ partner.firstName }} {{ partner.lastName }}</h1>
+                {% if conversation is empty %}
+                    <div class="alert alert-info">No messages in this conversation yet.</div>
+                {% endif %}
+
+                {% for message in conversation %}
+                    <div class="mb-3 p-3 rounded {{ message.sender.id == app.user.id ? 'bg-primary text-white' : 'bg-light' }}">
+                        <div class="small text-muted">{{ message.sender.firstName }} {{ message.sender.lastName }} • {{ message.createdAt|date('Y-m-d H:i') }}</div>
+                        <p class="mb-0">{{ message.content }}</p>
+                    </div>
+                {% endfor %}
+
+                <h2 class="h5 mt-4">Reply</h2>
+                {{ form_start(replyForm) }}
+                    {{ form_row(replyForm.content) }}
+                    <button class="btn btn-primary">Send reply</button>
+                {{ form_end(replyForm) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,45 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Admin Dashboard - PsyCare{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-lg-12">
+        <div class="card shadow-sm mb-4">
+            <div class="card-body">
+                <h1 class="h4">Admin Dashboard</h1>
+                <div class="row mt-4">
+                    <div class="col-md-4 mb-3">
+                        <div class="card p-3">
+                            <h2 class="h5">Total users</h2>
+                            <p class="display-6">{{ totalUsers }}</p>
+                        </div>
+                    </div>
+                    <div class="col-md-4 mb-3">
+                        <div class="card p-3">
+                            <h2 class="h5">Active users</h2>
+                            <p class="display-6">{{ activeUsers }}</p>
+                        </div>
+                    </div>
+                </div>
+                <a class="btn btn-outline-primary" href="{{ path('admin_users') }}">Manage users</a>
+                <a class="btn btn-outline-secondary" href="{{ path('admin_messages') }}">See all messages</a>
+            </div>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h2 class="h5">Recent messages</h2>
+                {% for message in recentMessages %}
+                    <div class="border-bottom py-2">
+                        <div class="small text-muted">{{ message.createdAt|date('Y-m-d H:i') }} from {{ message.sender.firstName }} {{ message.sender.lastName }} to {{ message.receiver.firstName }} {{ message.receiver.lastName }}</div>
+                        <p class="mb-0">{{ message.content[:120] ~ (message.content|length > 120 ? '...' : '') }}</p>
+                    </div>
+                {% else %}
+                    <div class="alert alert-info">No messages available.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}My Profile - PsyCare{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-xl-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h4 mb-4">My Profile</h1>
+                <dl class="row">
+                    <dt class="col-sm-4">Name</dt>
+                    <dd class="col-sm-8">{{ user.firstName }} {{ user.lastName }}</dd>
+
+                    <dt class="col-sm-4">Email</dt>
+                    <dd class="col-sm-8">{{ user.email }}</dd>
+
+                    <dt class="col-sm-4">Phone</dt>
+                    <dd class="col-sm-8">{{ user.phone }}</dd>
+
+                    <dt class="col-sm-4">Birth date</dt>
+                    <dd class="col-sm-8">{{ user.birthDate ? user.birthDate|date('Y-m-d') : 'N/A' }}</dd>
+
+                    <dt class="col-sm-4">Role</dt>
+                    <dd class="col-sm-8">{{ user.isPsychologist() ? 'Psychologist' : 'Patient' }}</dd>
+
+                    {% if user.isPsychologist() %}
+                        <dt class="col-sm-4">Specialty</dt>
+                        <dd class="col-sm-8">{{ user.specialty }}</dd>
+                        <dt class="col-sm-4">Diploma</dt>
+                        <dd class="col-sm-8">{{ user.diploma }}</dd>
+                        <dt class="col-sm-4">Biography</dt>
+                        <dd class="col-sm-8">{{ user.bio }}</dd>
+                    {% endif %}
+                </dl>
+                <a class="btn btn-primary" href="{{ path('app_profile_edit') }}">Edit profile</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

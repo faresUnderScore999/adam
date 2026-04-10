@@ -1,0 +1,29 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Conversations - PsyCare{% endblock %}
+
+{% block body %}
+<div class="row">
+    <div class="col-lg-10">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h4 mb-4">My Conversations</h1>
+
+                {% for item in conversations %}
+                    <a href="{{ path('app_messages_conversation', { partnerId: item.id }) }}" class="text-decoration-none text-dark">
+                        <div class="conversation-preview">
+                            <div class="d-flex justify-content-between">
+                                <strong>{{ item.first_name }} {{ item.last_name }}</strong>
+                                <small class="text-muted">{{ item.last_at|date('Y-m-d H:i') }}</small>
+                            </div>
+                            <div class="text-truncate">{{ item.preview }}</div>
+                        </div>
+                    </a>
+                {% else %}
+                    <div class="alert alert-info">You have no conversations yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

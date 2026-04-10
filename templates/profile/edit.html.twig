@@ -1,0 +1,35 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Edit Profile - PsyCare{% endblock %}
+
+{% block body %}
+<div class="row justify-content-center">
+    <div class="col-xl-8">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <h1 class="h4 mb-4">Edit Profile</h1>
+                {{ form_start(profileForm) }}
+                    <div class="row g-3">
+                        <div class="col-md-6">{{ form_row(profileForm.firstName) }}</div>
+                        <div class="col-md-6">{{ form_row(profileForm.lastName) }}</div>
+                        <div class="col-md-6">{{ form_row(profileForm.phone) }}</div>
+                        <div class="col-md-6">{{ form_row(profileForm.birthDate) }}</div>
+                        {% if profileForm.diploma is defined %}
+                            <div class="col-md-6">{{ form_row(profileForm.diploma) }}</div>
+                        {% endif %}
+                        {% if profileForm.specialty is defined %}
+                            <div class="col-md-6">{{ form_row(profileForm.specialty) }}</div>
+                        {% endif %}
+                        {% if profileForm.bio is defined %}
+                            <div class="col-12">{{ form_row(profileForm.bio) }}</div>
+                        {% endif %}
+                        <div class="col-md-6">{{ form_row(profileForm.plainPassword.first) }}</div>
+                        <div class="col-md-6">{{ form_row(profileForm.plainPassword.second) }}</div>
+                    </div>
+                    <div class="mt-4">{{ form_row(profileForm.save, {attr: {class: 'btn btn-primary'}}) }}</div>
+                {{ form_end(profileForm) }}
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
