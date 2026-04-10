@@ -25,6 +25,7 @@ class MessageController extends AbstractController
 
         return $this->render('message/index.html.twig', [
             'conversations' => $messageRepository->findConversationPartners($user),
+            'currentConversation' => null,
         ]);
     }
 

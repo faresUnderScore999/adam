@@ -34,15 +34,40 @@ class DashboardController extends AbstractController
             return $this->redirectToRoute('app_login');
         }
 
+        // Get user-specific stats
+        $userInbox = $messageRepository->findInbox($user);
+        $unreadMessages = $messageRepository->findUnreadMessages($user);
+
         $stats = [
-            'totalMessages' => count($messageRepository->findInbox($user)),
-            'totalUnreadMessages' => count($messageRepository->findUnreadMessages($user)),
+            'totalMessages' => count($userInbox),
+            'totalUnreadMessages' => count($unreadMessages),
         ];
+
+        // Get recent messages for the user (last 10)
+        $recentMessages = array_slice($userInbox, 0, 10);
+
+        // Admin stats (only for admin users)
+        $totalUsers = 0;
+        $activeUsers = 0;
+
+        if ($this->isGranted('ROLE_ADMIN')) {
+            // Get all users count
+            $allUsers = $userRepository->findAll();
+            $totalUsers = count($allUsers);
+
+            // Count active users (users who have logged in recently or have messages)
+            $activeUsers = count(array_filter($allUsers, function($u) {
+                return $u->isActive();
+            }));
+        }
 
         return $this->render('dashboard/index.html.twig', [
             'searchForm' => $searchForm->createView(),
             'psychologists' => $userRepository->findPsychologists($search),
             'stats' => $stats,
+            'recentMessages' => $recentMessages,
+            'totalUsers' => $totalUsers,
+            'activeUsers' => $activeUsers,
             'isPatient' => $user->isPatient(),
         ]);
     }

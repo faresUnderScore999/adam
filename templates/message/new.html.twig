@@ -5,12 +5,31 @@
 {% block body %}
 <div class="row justify-content-center">
     <div class="col-lg-8">
-        <div class="card shadow-sm">
-            <div class="card-body">
-                <h1 class="h4 mb-4">Send a message to {{ receiver.firstName }} {{ receiver.lastName }}</h1>
+        <div class="message-compose-container">
+            <div class="compose-header">
+                <h1>Send a Message</h1>
+                <div class="receiver-info">
+                    <div class="receiver-avatar">{{ receiver.firstName|first }}{{ receiver.lastName|first }}</div>
+                    <div class="receiver-details">
+                        <div class="receiver-name">{{ receiver.firstName }} {{ receiver.lastName }}</div>
+                        {% if receiver.specialty %}
+                        <div class="receiver-specialty">{{ receiver.specialty }}</div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            <div class="compose-body">
                 {{ form_start(messageForm) }}
-                    {{ form_row(messageForm.content) }}
-                    <button class="btn btn-primary">Send message</button>
+                <div class="message-form-group">
+                    {{ form_label(messageForm.content, 'Your Message', {'label_attr': {'class': 'form-label'}}) }}
+                    {{ form_widget(messageForm.content, {'attr': {'class': 'form-control', 'rows': 6, 'placeholder': 'Type your message here...'}}) }}
+                    {{ form_errors(messageForm.content) }}
+                </div>
+                <div class="compose-actions">
+                    <button class="btn btn-primary px-4">
+                        <i class="fas fa-paper-plane me-2"></i>Send Message
+                    </button>
+                </div>
                 {{ form_end(messageForm) }}
             </div>
         </div>

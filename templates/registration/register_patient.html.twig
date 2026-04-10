@@ -1,60 +1,209 @@
 {% extends 'base.html.twig' %}
 
-{% block title %}Register a Patient - PsyCare{% endblock %}
+{% block title %}Register as Patient - PsyCare{% endblock %}
 
 {% block body %}
-<div class="row justify-content-center">
-    <div class="col-xl-8 col-lg-10">
-        <div class="card">
-            <div class="card-header">
-                <h1 class="h4 mb-0">Join PsyCare as a Patient</h1>
+<div class="row justify-content-center align-items-center" style="min-height: calc(100vh - 250px);">
+    <div class="col-lg-6 col-md-8">
+        <!-- Registration Card -->
+        <div class="card border-0">
+            <!-- Header -->
+            <div class="card-header border-0 text-center py-4 bg-light">
+                <div class="mb-3">
+                    <i class="bi bi-heart-pulse-fill" style="font-size: 2.5rem; color: #4f46e5;"></i>
+                </div>
+                <h1 class="h3 mb-2 fw-700">Create Your Account</h1>
+                <p class="text-muted mb-0">Join PsyCare and get professional mental health support</p>
             </div>
-            <div class="card-body">
-                <p class="text-muted mb-4">Create your account to connect with professional psychologists and start your mental health journey.</p>
-                {{ form_start(registrationForm, {'attr': {'novalidate': 'novalidate'}}) }}
-                    <div class="row g-3">
-                        <div class="col-md-6">
-                            {{ form_label(registrationForm.firstName) }}
-                            {{ form_widget(registrationForm.firstName, {'attr': {'class': 'form-control', 'placeholder': 'Enter your first name'}}) }}
-                            {{ form_errors(registrationForm.firstName) }}
-                        </div>
-                        <div class="col-md-6">
-                            {{ form_label(registrationForm.lastName) }}
-                            {{ form_widget(registrationForm.lastName, {'attr': {'class': 'form-control', 'placeholder': 'Enter your last name'}}) }}
-                            {{ form_errors(registrationForm.lastName) }}
-                        </div>
-                        <div class="col-md-6">
-                            {{ form_label(registrationForm.email) }}
-                            {{ form_widget(registrationForm.email, {'attr': {'class': 'form-control', 'placeholder': 'Enter your email address'}}) }}
-                            {{ form_errors(registrationForm.email) }}
-                        </div>
-                        <div class="col-md-6">
-                            {{ form_label(registrationForm.phone) }}
-                            {{ form_widget(registrationForm.phone, {'attr': {'class': 'form-control', 'placeholder': 'Enter your phone number'}}) }}
-                            {{ form_errors(registrationForm.phone) }}
-                        </div>
-                        <div class="col-md-6">
-                            {{ form_label(registrationForm.birthDate) }}
-                            {{ form_widget(registrationForm.birthDate, {'attr': {'class': 'form-control'}}) }}
-                            {{ form_errors(registrationForm.birthDate) }}
-                        </div>
-                        <div class="col-md-6">
-                            {{ form_label(registrationForm.plainPassword.first) }}
-                            {{ form_widget(registrationForm.plainPassword.first, {'attr': {'class': 'form-control', 'placeholder': 'Create a strong password'}}) }}
-                            {{ form_errors(registrationForm.plainPassword.first) }}
-                        </div>
-                        <div class="col-md-6">
-                            {{ form_label(registrationForm.plainPassword.second) }}
-                            {{ form_widget(registrationForm.plainPassword.second, {'attr': {'class': 'form-control', 'placeholder': 'Confirm your password'}}) }}
-                            {{ form_errors(registrationForm.plainPassword.second) }}
-                        </div>
+
+            <!-- Body -->
+            <div class="card-body py-4">
+                <!-- Alerts -->
+                {% if error %}
+                    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                        <i class="bi bi-exclamation-circle-fill me-2"></i>
+                        {{ error.messageKey|trans(error.messageData, 'validators') }}
+                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
                     </div>
-                    <div class="mt-4">
-                        {{ form_widget(registrationForm.save, {'attr': {'class': 'btn btn-primary w-100'}, 'label': 'Create Patient Account'}) }}
+                {% endif %}
+
+                <!-- Registration Form -->
+                <form method="post" action="{{ path('app_register_patient') }}" novalidate>
+                    <!-- Personal Information Section -->
+                    <h6 class="text-muted text-uppercase small fw-600 mb-3">Personal Information</h6>
+
+                    <!-- First Name -->
+                    <div class="form-group mb-3">
+                        <label for="firstName" class="form-label">
+                            <i class="bi bi-person me-1"></i>First Name
+                        </label>
+                        <input 
+                            type="text" 
+                            id="firstName" 
+                            name="firstName" 
+                            class="form-control form-control-lg"
+                            placeholder="John"
+                            required
+                        >
                     </div>
-                {{ form_end(registrationForm) }}
-                <div class="text-center mt-3">
-                    <small class="text-muted">Already have an account? <a href="{{ path('app_login') }}">Sign in here</a></small>
+
+                    <!-- Last Name -->
+                    <div class="form-group mb-3">
+                        <label for="lastName" class="form-label">
+                            <i class="bi bi-person me-1"></i>Last Name
+                        </label>
+                        <input 
+                            type="text" 
+                            id="lastName" 
+                            name="lastName" 
+                            class="form-control form-control-lg"
+                            placeholder="Doe"
+                            required
+                        >
+                    </div>
+
+                    <!-- Account Information Section -->
+                    <h6 class="text-muted text-uppercase small fw-600 mb-3 mt-4">Account Information</h6>
+
+                    <!-- Email -->
+                    <div class="form-group mb-3">
+                        <label for="email" class="form-label">
+                            <i class="bi bi-envelope me-1"></i>Email Address
+                        </label>
+                        <input 
+                            type="email" 
+                            id="email" 
+                            name="email" 
+                            class="form-control form-control-lg"
+                            placeholder="you@example.com"
+                            required
+                        >
+                        <small class="text-muted">We'll never share your email</small>
+                    </div>
+
+                    <!-- Password -->
+                    <div class="form-group mb-3">
+                        <label for="password" class="form-label">
+                            <i class="bi bi-lock me-1"></i>Password
+                        </label>
+                        <input 
+                            type="password" 
+                            id="password" 
+                            name="password" 
+                            class="form-control form-control-lg"
+                            placeholder="••••••••"
+                            required
+                        >
+                        <small class="text-muted">
+                            <i class="bi bi-info-circle me-1"></i>
+                            At least 8 characters with uppercase, lowercase, and numbers
+                        </small>
+                    </div>
+
+                    <!-- Confirm Password -->
+                    <div class="form-group mb-3">
+                        <label for="confirmPassword" class="form-label">
+                            <i class="bi bi-lock me-1"></i>Confirm Password
+                        </label>
+                        <input 
+                            type="password" 
+                            id="confirmPassword" 
+                            name="confirmPassword" 
+                            class="form-control form-control-lg"
+                            placeholder="••••••••"
+                            required
+                        >
+                    </div>
+
+                    <!-- Additional Information Section -->
+                    <h6 class="text-muted text-uppercase small fw-600 mb-3 mt-4">About You</h6>
+
+                    <!-- Phone -->
+                    <div class="form-group mb-3">
+                        <label for="phone" class="form-label">
+                            <i class="bi bi-telephone me-1"></i>Phone Number
+                        </label>
+                        <input 
+                            type="tel" 
+                            id="phone" 
+                            name="phone" 
+                            class="form-control form-control-lg"
+                            placeholder="+1 (555) 000-0000"
+                        >
+                    </div>
+
+                    <!-- Bio -->
+                    <div class="form-group mb-4">
+                        <label for="bio" class="form-label">
+                            <i class="bi bi-chat-dots me-1"></i>Bio (Optional)
+                        </label>
+                        <textarea 
+                            id="bio" 
+                            name="bio" 
+                            class="form-control"
+                            rows="3"
+                            placeholder="Tell us a little about yourself..."
+                        ></textarea>
+                        <small class="text-muted">Max 500 characters</small>
+                    </div>
+
+                    <!-- Terms & Conditions -->
+                    <div class="form-check mb-4">
+                        <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            id="terms" 
+                            name="terms" 
+                            required
+                        >
+                        <label class="form-check-label" for="terms">
+                            I agree to the 
+                            <a href="#" target="_blank" class="text-primary fw-600">Terms of Service</a> 
+                            and 
+                            <a href="#" target="_blank" class="text-primary fw-600">Privacy Policy</a>
+                        </label>
+                    </div>
+
+                    <div class="form-check mb-4">
+                        <input 
+                            class="form-check-input" 
+                            type="checkbox" 
+                            id="communications" 
+                            name="communications"
+                        >
+                        <label class="form-check-label" for="communications">
+                            I'd like to receive updates and tips about mental health
+                        </label>
+                    </div>
+
+                    <!-- Submit Button -->
+                    <button type="submit" class="btn btn-primary btn-lg w-100 mb-3">
+                        <i class="bi bi-check-circle me-2"></i>Create Account
+                    </button>
+
+                    <!-- Login Link -->
+                    <div class="text-center">
+                        <small class="text-muted">
+                            Already have an account? 
+                            <a href="{{ path('app_login') }}" class="fw-600">Sign in</a>
+                        </small>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Info Box -->
+        <div class="mt-4">
+            <div class="alert alert-info bg-light border-0">
+                <div class="row g-3 align-items-center">
+                    <div class="col-auto">
+                        <i class="bi bi-shield-check text-info" style="font-size: 1.5rem;"></i>
+                    </div>
+                    <div class="col">
+                        <strong>Your privacy matters</strong>
+                        <br>
+                        <small class="text-muted">All communications are encrypted and confidential</small>
+                    </div>
                 </div>
             </div>
         </div>

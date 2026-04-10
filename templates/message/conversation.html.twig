@@ -3,35 +3,104 @@
 {% block title %}Conversation with {{ partner.firstName }} - PsyCare{% endblock %}
 
 {% block body %}
-<div class="container">
-    <div class="conversation-container">
-        <div class="conversation-header">
-            💬 {{ partner.firstName }} {{ partner.lastName }}
-            {% if partner.specialty %}
-                <span class="badge bg-primary ms-2">{{ partner.specialty }}</span>
-            {% endif %}
-        </div>
-        <div class="messages-list">
-            {% for message in conversation %}
-                <div class="message-bubble{% if message.sender.id == app.user.id %} sent{% endif %}">
-                    <div class="message-content">{{ message.content|nl2br }}</div>
-                    <div class="message-time">{{ message.createdAt|date('M j, H:i') }}</div>
+<div class="chat-container">
+    <!-- Chat Header -->
+    <div class="chat-header">
+        <div class="d-flex align-items-center">
+            <a href="{{ path('app_messages') }}" class="btn btn-sm btn-light me-3">
+                <i class="bi bi-arrow-left"></i>
+            </a>
+            <div class="chat-partner-info">
+                <div class="chat-avatar">
+                    {{ (partner.firstName|slice(0, 1)|upper) }}{{ (partner.lastName|slice(0, 1)|upper) }}
                 </div>
-            {% else %}
-                <div class="alert alert-info text-center">No messages yet. Start the conversation!</div>
-            {% endfor %}
+                <div class="chat-partner-details">
+                    <h6 class="mb-0">{{ partner.firstName }} {{ partner.lastName }}</h6>
+                    <small class="text-muted">
+                        {% if partner.specialty %}
+                            {{ partner.specialty }}
+                        {% else %}
+                            {{ partner.roles|first|replace({'ROLE_': ''})|lower }}
+                        {% endif %}
+                        <span class="status-dot online"></span>
+                    </small>
+                </div>
+            </div>
         </div>
-        <div class="message-form">
-            {{ form_start(replyForm) }}
-                <div class="mb-3">
-                    {{ form_widget(replyForm.content, {'attr': {'class': 'form-control', 'rows': 3, 'placeholder': 'Type your message...'}}) }}
+        <div class="chat-actions">
+            <button class="btn btn-sm btn-light" title="More options">
+                <i class="bi bi-three-dots-vertical"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- Messages Area -->
+    <div class="chat-messages" id="messagesContainer">
+        {% for message in conversation %}
+        <div class="message-wrapper{% if message.sender.id == app.user.id %} sent{% else %} received{% endif %}">
+            <div class="message-bubble">
+                <div class="message-content">{{ message.content|nl2br }}</div>
+                <div class="message-time">{{ message.createdAt|date('H:i') }}</div>
+            </div>
+        </div>
+        {% else %}
+        <div class="empty-chat">
+            <div class="empty-chat-icon">
+                <i class="bi bi-chat-dots"></i>
+            </div>
+            <h4>No messages yet</h4>
+            <p>Start the conversation by sending a message below.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <!-- Message Input -->
+    <div class="chat-input">
+        <div class="input-container">
+            {{ form_start(replyForm, {'attr': {'class': 'd-flex align-items-end gap-3'}}) }}
+                <div class="flex-grow-1">
+                    {{ form_widget(replyForm.content, {
+                        'attr': {
+                            'class': 'form-control chat-input-field',
+                            'placeholder': 'Type your message...',
+                            'rows': 1,
+                            'data-controller': 'auto-resize-textarea'
+                        }
+                    }) }}
                     {{ form_errors(replyForm.content) }}
                 </div>
-                <div class="text-end">
-                    {{ form_widget(replyForm.save, {'attr': {'class': 'btn btn-primary px-4'}}) }}
+                <div class="input-actions">
+                    <button type="button" class="btn btn-light btn-sm" title="Attach file">
+                        <i class="bi bi-paperclip"></i>
+                    </button>
+                    {{ form_widget(replyForm.save, {
+                        'attr': {
+                            'class': 'btn btn-primary send-btn'
+                        },
+                        'label': '<i class="bi bi-send-fill"></i>'
+                    }) }}
                 </div>
             {{ form_end(replyForm) }}
         </div>
     </div>
 </div>
+
+<script>
+// Auto-resize textarea
+document.addEventListener('DOMContentLoaded', function() {
+    const textarea = document.querySelector('.chat-input-field');
+    if (textarea) {
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.min(this.scrollHeight, 120) + 'px';
+        });
+    }
+
+    // Scroll to bottom of messages
+    const messagesContainer = document.getElementById('messagesContainer');
+    if (messagesContainer) {
+        messagesContainer.scrollTop = messagesContainer.scrollHeight;
+    }
+});
+</script>
 {% endblock %}

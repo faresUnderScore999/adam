@@ -97,12 +97,16 @@ class MessageRepository extends ServiceEntityRepository
 
                 $conversations[$id] = [
                     'id' => $id,
-                    'first_name' => $partner->getFirstName(),
-                    'last_name' => $partner->getLastName(),
-                    'specialty' => $partner->getSpecialty(),
-                    'last_at' => $message->getCreatedAt(),
-                    'preview' => mb_substr($message->getContent(), 0, 120),
-                    'unread_count' => (int) $unreadCount,
+                    'otherUser' => [
+                        'firstName' => $partner->getFirstName(),
+                        'lastName' => $partner->getLastName(),
+                        'roles' => $partner->getRoles(),
+                    ],
+                    'lastMessage' => [
+                        'content' => $message->getContent(),
+                        'createdAt' => $message->getCreatedAt(),
+                    ],
+                    'unreadCount' => (int) $unreadCount,
                 ];
             }
         }
